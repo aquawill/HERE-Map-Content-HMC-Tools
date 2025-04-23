@@ -104,8 +104,9 @@ if __name__ == '__main__':
                                 hmc_json_keys = list(hmc_json.keys())
 
                                 for key in hmc_json_keys:
-                                    if hmc_json[key][0].get('placeIndex') is not None:
-                                        place_index_attribute_mapping(key)
+                                    if len(hmc_json[key]) > 0:
+                                        if hmc_json[key][0].get('placeIndex') is not None:
+                                            place_index_attribute_mapping(key)
                                     else:
                                         attribute_list_mapping(key)
 

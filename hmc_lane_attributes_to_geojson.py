@@ -4,10 +4,6 @@ import re
 
 import geojson
 import shapely.ops
-from here.content.utils.hmc_external_references import HMCExternalReferences
-from here.content.utils.hmc_external_references import Ref
-from here.platform.adapter import Identifier
-from here.platform.adapter import Partition
 from progressbar import ProgressBar
 
 import hmc_layer_cross_referencing
@@ -95,18 +91,23 @@ if __name__ == '__main__':
 
                                     # lane attribute mapping
                                     for key in list(hmc_json.keys()):
-                                        if isinstance(hmc_json[key], list) and hmc_json[key][0].get('laneIndex'):
-                                            topology_anchor_multi_attribute_mapping(lane_list, key, 'laneIndex')
+                                        if len(hmc_json[key]) > 0:
+                                            if isinstance(hmc_json[key], list) and hmc_json[key][0].get('laneIndex'):
+                                                topology_anchor_multi_attribute_mapping(lane_list, key, 'laneIndex')
 
                                     # segment lane mapping
                                     for key in list(hmc_json.keys()):
-                                        if isinstance(hmc_json[key], list) and hmc_json[key][0].get('segmentAnchorIndex'):
-                                            topology_anchor_multi_attribute_mapping(segment_anchor_with_attributes_list,
-                                                                                    key, 'segmentAnchorIndex')
+                                        if len(hmc_json[key]) > 0:
+                                            if isinstance(hmc_json[key], list) and hmc_json[key][0].get(
+                                                    'segmentAnchorIndex'):
+                                                topology_anchor_multi_attribute_mapping(
+                                                    segment_anchor_with_attributes_list,
+                                                    key, 'segmentAnchorIndex')
 
                                     # segment topology mapping
                                     segment_process_progressbar = ProgressBar(min_value=0, max_value=len(
-                                        segment_anchor_with_attributes_list), prefix='{} - processing segments:'.format(f))
+                                        segment_anchor_with_attributes_list), prefix='{} - processing segments:'.format(
+                                        f))
                                     segment_anchor_with_topology_list = []
                                     for segment_anchor_with_attributes in segment_anchor_with_attributes_list:
                                         segment_process_progressbar.update(segment_anchor_with_attributes_index)
@@ -139,11 +140,11 @@ if __name__ == '__main__':
                                                     feature_geometry_with_offsets_geojson = geojson.loads(
                                                         shapely.to_geojson(feature_geometry_with_offsets))
                                                     if segment_start_offset == segment_end_offset:
-                                                        segment_anchor_geojson_feature.type = 'Point'
+                                                        segment_anchor_geojson_feature.type = 'Feature'
                                                         segment_anchor_geojson_feature.geometry = geojson.geometry.Point(
                                                             feature_geometry_with_offsets_geojson)
                                                     else:
-                                                        segment_anchor_geojson_feature.type = 'LineString'
+                                                        segment_anchor_geojson_feature.type = 'Feature'
                                                         segment_anchor_geojson_feature.geometry = geojson.geometry.LineString(
                                                             feature_geometry_with_offsets_geojson)
 
@@ -157,7 +158,8 @@ if __name__ == '__main__':
                                                         #                     identifier=Identifier(
                                                         #                         segment_ref['identifier'])))
 
-                                                    segment_anchor_with_topology_list.append(segment_anchor_geojson_feature)
+                                                    segment_anchor_with_topology_list.append(
+                                                        segment_anchor_geojson_feature)
                                     segment_anchor_with_topology_feature_collection = geojson.FeatureCollection(
                                         segment_anchor_with_topology_list)
                                     segment_process_progressbar.finish()

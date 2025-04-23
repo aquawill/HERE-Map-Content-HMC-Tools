@@ -7,7 +7,7 @@ from here.platform import Platform
 from progressbar import ProgressBar
 
 import hmc_layer_cross_referencing
-from download_options import FileFormat
+from hmc_download_options import FileFormat
 from hmc_downloader import HmcDownloader
 
 polygon_feature_layers = ['address-locations']

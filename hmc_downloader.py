@@ -6,13 +6,15 @@ schema, download data, and extract country tile and admin indexes.
 
 import json
 import os
+import subprocess
+from typing import Optional, List
 
 from google.protobuf.json_format import MessageToJson
 from here.platform.adapter import DecodedMessage
 from here.platform.catalog import Catalog
 from here.platform.partition import Partition
 
-from download_options import FileFormat
+from hmc_download_options import FileFormat
 
 
 class HmcDownloader:
@@ -166,6 +168,72 @@ class HmcDownloader:
             for p in partitions:
                 self.partition_file_writer(p)
 
+    def olp_cli_download_partition(
+            self,
+            tiling_scheme: str,
+            quad_ids: List[int],
+            write_to_file: bool = True,
+            version: Optional[int] = None,
+    ):
+        """
+        For each partition ID in quad_ids:
+          1. If version is None, call 'olp catalog layer partition list ... --json'
+             and parse out the version from dataHandle.
+          2. Build the 'olp catalog layer partition get' command with that version.
+          3. Redirect its output into the path returned by get_output_filepath().
+        """
+        self.set_tiling_scheme(tiling_scheme)
+        for partition_id in quad_ids:
+            # 1. Determine which version to fetch
+            if version is None:
+                list_cmd = [
+                    'olp', 'catalog', 'layer', 'partition', 'list',
+                    self.catalog.hrn, self.layer,
+                    '--filter', str(partition_id),
+                    '--json'
+                ]
+                # run the list command and parse JSON
+                res = subprocess.run(
+                    list_cmd,
+                    capture_output=True,
+                    shell=True,
+                    check=True
+                )
+                payload = json.loads(res.stdout)
+                items = payload.get('results', {}).get('items', [])
+                if not items:
+                    raise RuntimeError(f"No partition info found for {partition_id}")
+                data_handle = items[0]['dataHandle']
+                # extract version suffix after the last '.'
+                ver = int(data_handle.split('.')[-1])
+            else:
+                ver = version
+
+            # 2. Build the get command
+            get_cmd = [
+                'olp', 'catalog', 'layer', 'partition', 'get',
+                self.catalog.hrn, self.layer,
+                '--partitions', str(partition_id),
+                '--version', str(ver),
+                '--decode', 'true'
+            ]
+
+            print(' '.join(get_cmd))
+
+            if write_to_file:
+                # 3a. Decide output path
+                output_file = self.get_output_filepath(partition_id, ver)
+                # 3b. Add shell redirection
+                full_cmd = ' '.join(get_cmd) + f' > "{output_file}"'
+                # 3c. Execute
+                result = subprocess.run(
+                    full_cmd,
+                    shell=True,
+                    check=True
+                )
+                print(f"Written: {output_file} (return code: {result.returncode})")
+                self.output_file_path = output_file
+
     def download_generic_layer(self, quad_ids: list, version: int):
         self.set_tiling_scheme("generic")
         versioned_layer = self.catalog.get_layer(
@@ -176,6 +244,27 @@ class HmcDownloader:
         )  # Read partitions for the specified quad IDs
         for p in partitions:
             self.partition_file_writer(p)
+
+    def get_output_filepath(self, partition_id: int, version: Optional[int]) -> str:
+        """
+        Determine the output path for a given partition and version,
+        create directories if necessary, and return the full file path.
+        """
+        hrn_folder = self.catalog.hrn.replace(':', '_')
+        base_dir = os.path.join(
+            'decoded',
+            hrn_folder,
+            self.tiling_scheme,
+            str(partition_id)
+        )
+        os.makedirs(base_dir, exist_ok=True)
+
+        filename = f"{self.layer}_{partition_id}"
+        if version is not None:
+            filename += f"_v{version}_olpcli"
+        filename += ".json"
+
+        return os.path.join(base_dir, filename)
 
     def download_partitioned_layer(self, quad_ids: list, write_to_file: bool = True, version: int = None):
         self.set_tiling_scheme("heretile")
@@ -188,9 +277,6 @@ class HmcDownloader:
         if write_to_file:
             for p in partitions:
                 self.partition_file_writer(p)
-                versioned_partition, partition_content = p
-                olpcli_command = f'* OLPCLI command:\tolp catalog layer partition get {self.catalog.hrn} {self.layer} --partitions {versioned_partition.id} --version {versioned_partition.version} --decode true > {self.layer}_{versioned_partition.id}_v{versioned_partition.version}.json'
-                print(olpcli_command)
         else:
             self.partition_data = partitions
         return self

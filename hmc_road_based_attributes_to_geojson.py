@@ -14,7 +14,7 @@ from here.content.content import Content
 from here.content.hmc2.hmc import HMC
 from progressbar import ProgressBar
 from hmc_downloader import HmcDownloader
-from download_options import FileFormat
+from hmc_download_options import FileFormat
 
 import hmc_layer_cross_referencing
 
@@ -68,7 +68,7 @@ def topology_anchor_attribute_mapping(attribute_name, index_name):
 segment_anchor_with_attributes_list = []
 node_anchor_with_attributes_list = []
 
-input_layers = ['advanced-navigation-attributes', 'complex-road-attributes', 'navigation-attributes',
+input_layers = ['topology-attributes','advanced-navigation-attributes', 'complex-road-attributes', 'navigation-attributes',
                 'road-attributes', 'traffic-patterns', 'sign-text', 'generalized-junctions-signs',
                 'bicycle-attributes', 'address-attributes', 'adas-attributes', 'truck-attributes',
                 'recreational-vehicle-attributes']
@@ -123,14 +123,15 @@ if __name__ == '__main__':
                                         segment_anchor['properties'] = {}
                                     for key in list(hmc_json.keys()):
                                         if isinstance(hmc_json[key], list):
-                                            if hmc_json[key][0].get('segmentAnchorIndex'):
-                                                topology_anchor_attribute_mapping(key, 'segmentAnchorIndex')
-                                            elif isinstance(hmc_json[key][0], dict) and \
-                                                hmc_json[key][0].get('originSegmentAnchorIndex'):
-                                                topology_anchor_attribute_mapping(key, 'originSegmentAnchorIndex')
-                                            elif isinstance(hmc_json[key][0], dict) and \
-                                            hmc_json[key][0].get('originatingSegmentAnchorIndex'):
-                                                topology_anchor_attribute_mapping(key, 'originatingSegmentAnchorIndex')
+                                            if len(hmc_json[key])>0:
+                                                if hmc_json[key][0].get('segmentAnchorIndex'):
+                                                    topology_anchor_attribute_mapping(key, 'segmentAnchorIndex')
+                                                elif isinstance(hmc_json[key][0], dict) and \
+                                                    hmc_json[key][0].get('originSegmentAnchorIndex'):
+                                                    topology_anchor_attribute_mapping(key, 'originSegmentAnchorIndex')
+                                                elif isinstance(hmc_json[key][0], dict) and \
+                                                hmc_json[key][0].get('originatingSegmentAnchorIndex'):
+                                                    topology_anchor_attribute_mapping(key, 'originatingSegmentAnchorIndex')
                                         # for hmc_json_key_element in hmc_json[key]:
                                         #     print(type(hmc_json_key_element), hmc_json_key_element)
                                     segment_anchor_with_topology_list = []
@@ -165,11 +166,11 @@ if __name__ == '__main__':
                                                     feature_geometry_with_offsets_geojson = geojson.loads(
                                                         shapely.to_geojson(feature_geometry_with_offsets))
                                                     if segment_start_offset == segment_end_offset:
-                                                        segment_anchor_geojson_feature.type = 'Point'
+                                                        segment_anchor_geojson_feature.type = 'Feature'
                                                         segment_anchor_geojson_feature.geometry = geojson.geometry.Point(
                                                             feature_geometry_with_offsets_geojson)
                                                     else:
-                                                        segment_anchor_geojson_feature.type = 'LineString'
+                                                        segment_anchor_geojson_feature.type = 'Feature'
                                                         segment_anchor_geojson_feature.geometry = geojson.geometry.LineString(
                                                             feature_geometry_with_offsets_geojson)
 

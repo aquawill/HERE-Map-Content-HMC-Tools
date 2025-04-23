@@ -4,7 +4,7 @@ import here.geotiles.heretile as heretile
 from here.geotiles.heretile import BoundingBox, GeoCoordinate
 from here.platform import Platform
 
-from download_options import FileFormat, HerePlatformCatalog
+from hmc_download_options import FileFormat, HerePlatformCatalog, DownloadMethod
 from hmc_downloader import HmcDownloader
 
 
@@ -53,11 +53,12 @@ class GeoQuery:
 
 
 class LayerDownloader:
-    def __init__(self, platform, catalog, version):
+    def __init__(self, platform, catalog, version, method):
         self.platform = platform
         self.catalog = catalog
         self.available_layers = []
         self.version = version
+        self.method = method
 
     def fetch_available_layers(self):
         """
@@ -102,11 +103,25 @@ class LayerDownloader:
                 file_format=FileFormat.JSON,
                 version=self.version,
             )
-            downloader.download_partitioned_layer(
-                quad_ids=here_quad_longkey_list,
-                write_to_file=True,
-                version=self.version,
-            )
+
+            if self.method == DownloadMethod.DATA_SDK:
+                downloader.download_partitioned_layer(
+                    quad_ids=here_quad_longkey_list,
+                    write_to_file=True,
+                    version=self.version,
+                )
+
+            if self.method == DownloadMethod.OLP_CLI:
+                try:
+                    downloader.olp_cli_download_partition(
+                        tiling_scheme='heretile',
+                        quad_ids=here_quad_longkey_list,
+                        write_to_file=True,
+                        version=self.version,
+                    )
+                except RuntimeError:
+                    pass
+
             if downloader.get_schema():
                 print("* Schema: {}".format(downloader.get_schema().schema_hrn))
 
@@ -138,7 +153,7 @@ def main():
     download_target = download_center
 
     # 選項6：決定下載圖層的最高版本 (int or None)
-    download_version = 6967
+    download_version = None
 
     # 選項7：選擇要下載的catalog
     catalog = HerePlatformCatalog.HMC_RIB_2
@@ -165,8 +180,11 @@ def main():
         print("No tile/partition ID presented, quit.")
         return
 
+    # 選擇下載使用Data SDK或是OLP CLI (OLP CLI 需要另外安裝)
+    download_method = DownloadMethod.OLP_CLI
+
     # 下載圖層的流程
-    layer_downloader = LayerDownloader(platform, platform_catalog, download_version)
+    layer_downloader = LayerDownloader(platform, platform_catalog, download_version, download_method)
 
     # 選項8：選擇要下載的圖層
 
