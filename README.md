@@ -19,7 +19,7 @@ You will need a complete set of configuration to access HERE Map Content: Accoun
 6. Obtain OAuth credential of App, download credentials.properties file.
 7. Follow the [instruction](https://www.here.com/docs/bundle/data-sdk-for-python-developer-guide-v2/page/topics/install.html) to install HERE Data SDK for Python V2.
 8. Make sure credentials.properties has been placed to correct path.
-9. f you need to use [HERE OLP CLI](https://www.here.com/docs/bundle/command-line-interface-user-guide-java-scala/page/README.html), you need to install it separately. Please follow the instructions on the official website for installation and configurations.
+9. If you need to use [HERE OLP CLI](https://www.here.com/docs/bundle/command-line-interface-user-guide-java-scala/page/README.html), you need to install it separately. Please follow the instructions on the official website for installation and configurations.
 
 ### 先決條件：
 
