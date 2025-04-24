@@ -9,16 +9,16 @@
 
 You will need a complete set of configuration to access HERE Map Content: Account, App, Project, credential and SDK.
 
-1. Create account of HERE Platform https://platform.here.com/portal/.
-2. Create new project in https://platform.here.com/management/projects/.
-3. Create new app in https://platform.here.com/admin/apps.
-4. Grant access of project to app to project created at step 3.
-5. Link catalogs you need to project created at step 2.
+1. Create an account of HERE Platform https://platform.here.com/portal/.
+2. Create a new project in https://platform.here.com/management/projects/.
+3. Create a new app in https://platform.here.com/admin/apps.
+4. Grant access of a project to app to project created at step 3.
+5. Link catalogs you need to the project created at step 2.
    * `hrn:here:data::olp-here:rib-2`
    * `hrn:here:data::olp-here:rib-external-references-2`
-6. Obtain OAuth credential of App, download credentials.properties file.
+6. Obtain OAuth credential of App, download the credentials.properties file.
 7. Follow the [instruction](https://www.here.com/docs/bundle/data-sdk-for-python-developer-guide-v2/page/topics/install.html) to install HERE Data SDK for Python V2.
-8. Make sure credentials.properties has been placed to correct path.
+8. Make sure the credentials.properties file has been placed to a correct path.
 9. If you need to use [HERE OLP CLI](https://www.here.com/docs/bundle/command-line-interface-user-guide-java-scala/page/README.html), you need to install it separately. Please follow the instructions on the official website for installation and configurations.
 10. You can use [HMC Geojson Viewer](https://github.com/aquawill/HMC-GeoJSON-Viewer) to open the converted GeoJSON.
 
