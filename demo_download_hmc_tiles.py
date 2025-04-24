@@ -1,3 +1,86 @@
+"""
+This script is a sample utility for downloading heretile-partitioned layers from the HERE Platform.
+
+It provides multiple ways to define the geographic scope of data to be downloaded
+and supports both HERE Data SDK and OLP CLI as download methods.
+
+------------
+Prerequisites:
+- Python 3.7+
+- Valid HERE Platform credentials (e.g., via environment variables or credentials file)
+- Required Python modules:
+    - here.geotiles
+    - here.platform
+    - hmc_downloader.py (custom logic for interacting with partitioned layers)
+    - hmc_download_options.py (defines enums for catalogs, file format, and download method)
+- If using `DownloadMethod.OLP_CLI`, OLP CLI must be installed and configured
+
+------------
+Download Target Configuration:
+In the `main()` function, choose one of the following options and assign it to the variable `download_target`.
+
+1. **GeoCoordinate** (`download_center`)
+   Downloads the tile that contains a single lat/lon point.
+   Example:
+       download_center = GeoCoordinate(lat=51.664415, lng=-3.80175)
+
+2. **BoundingBox** (`download_bounding_box`)
+   Downloads all tiles that intersect the given bounding box.
+   Example:
+       download_bounding_box = BoundingBox(west=97.73, south=9.59, east=106.08, north=20.98)
+
+3. **Tile ID list** (`download_quad_id_list`)
+   Downloads specific tile(s) by ID.
+   Example:
+       download_quad_id_list = [23611407]
+
+4. **Country-based tile list** (`country_list_tuple`)
+   Automatically resolves tile IDs by country ISO3 codes.
+   Set `download_target = country_list_tuple` and define countries like:
+       country_list_tuple = ("TWN", "PHL")
+
+**Note: ** Only one of the above should be active at a time. Use `download_target` to select which target to download.
+
+------------
+Other Important Variables:
+
+- `catalog`: Specifies which HERE catalog to use.
+    Choose from:
+      - HerePlatformCatalog.HMC_RIB_2
+      - HerePlatformCatalog.HDLM_WEU_2
+      - HerePlatformCatalog.HMC_EXT_REF_2
+
+- `download_version`: Optional. Set to a specific catalog version (int), or None to use the latest.
+
+- `download_method`: Choose download strategy:
+    - DownloadMethod.DATA_SDK — Uses HERE Data SDK (requires credentials)
+    - DownloadMethod.OLP_CLI — Uses OLP CLI (must be installed)
+
+- `available_layers`: Optionally specify which layers to download manually.
+    If left empty, all heretile layers from the selected catalog will be used.
+
+------------
+Execution:
+
+After setting the appropriate options in `main()`, run the script:
+
+    python demo_download_hmc_tiles.py
+
+The script will:
+- Print HERE Platform connection status
+- Resolve partition (tile) IDs based on your selection
+- Fetch available layers in the catalog
+- Download the selected layers using the chosen method
+- Display schema information if available
+
+------------
+Tips:
+- Enable or disable layer sets in the `hmc_rib_2_layers`, `hdlm_weu_layers`, or `hmc_external_references_layers` lists.
+- Add logging or output redirection if running in batch mode or automation.
+
+"""
+
+
 import json
 
 import here.geotiles.heretile as heretile
