@@ -20,6 +20,7 @@ You will need a complete set of configuration to access HERE Map Content: Accoun
 7. Follow the [instruction](https://www.here.com/docs/bundle/data-sdk-for-python-developer-guide-v2/page/topics/install.html) to install HERE Data SDK for Python V2.
 8. Make sure credentials.properties has been placed to correct path.
 9. If you need to use [HERE OLP CLI](https://www.here.com/docs/bundle/command-line-interface-user-guide-java-scala/page/README.html), you need to install it separately. Please follow the instructions on the official website for installation and configurations.
+10. You can use [HMC Geojson Viewer](https://github.com/aquawill/HMC-GeoJSON-Viewer) to open the converted GeoJSON.
 
 ### 先決條件：
 
@@ -36,6 +37,7 @@ You will need a complete set of configuration to access HERE Map Content: Accoun
 7. 按照 [此說明](https://www.here.com/docs/bundle/data-sdk-for-python-developer-guide-v2/page/topics/install.html) 安裝HERE Data SDK for Python V2。
 8. 確保`credentials.properties`已放置在正確的路徑下。
 9. 如果需要使用 [HERE OLP CLI](https://www.here.com/docs/bundle/command-line-interface-user-guide-java-scala/page/README.html) 則需要另外安裝，請依照官方網站指示進行安裝與設定。
+10. 可以搭配 [HMC Geojson Viewer](https://github.com/aquawill/HMC-GeoJSON-Viewer) 開啟轉換完成後的GeoJSON。 
 
 ### Main programs:
 
