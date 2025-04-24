@@ -145,7 +145,7 @@ class LayerDownloader:
 
     def fetch_available_layers(self):
         """
-        獲取可用的圖層列表，並返回這些圖層。
+        取得可用的圖層列表，並返回這些圖層。
         """
         catalog_details = json.loads(json.dumps(self.catalog.get_details()))
         catalog_layers = catalog_details["layers"]
