@@ -234,7 +234,7 @@ def main():
     country_list_tuple = None
 
     # 選項5：決定下載圖層的範圍或目標
-    download_target = download_center
+    download_target = download_quad_id_list
 
     # 選項6：決定下載圖層的最高版本 (int or None)
     download_version = None
