@@ -80,7 +80,6 @@ Tips:
 
 """
 
-
 import json
 
 import here.geotiles.heretile as heretile
@@ -217,7 +216,7 @@ def main():
     print("HERE Platform Status:", platform.get_status())
 
     # 選項1：下載經緯度所在的partition
-    download_center = GeoCoordinate(lat=51.664415000000005, lng=-3.80175)
+    download_center = GeoCoordinate(lat=41.1185338888889, lng=-8.62504861111111)
 
     # 選項2：下載bounding box所包含的partitions
     download_bounding_box = BoundingBox(
@@ -234,7 +233,7 @@ def main():
     country_list_tuple = None
 
     # 選項5：決定下載圖層的範圍或目標
-    download_target = download_quad_id_list
+    download_target = download_center
 
     # 選項6：決定下載圖層的最高版本 (int or None)
     download_version = None
@@ -282,11 +281,11 @@ def main():
         # {'layer_id': 'traffic-patterns', 'tiling_scheme': 'heretile'},
         # {'layer_id': 'lane-attributes', 'tiling_scheme': 'heretile'},
         # {'layer_id': 'address-attributes', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'adas-attributes', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'adas-attributes', 'tiling_scheme': 'heretile'},
         # {'layer_id': 'road-attributes', 'tiling_scheme': 'heretile'},
-        # {"layer_id": "topology-geometry", "tiling_scheme": "heretile"},
-        # {"layer_id": "navigation-attributes", "tiling_scheme": "heretile"},
-        # {'layer_id': 'advanced-navigation-attributes', 'tiling_scheme': 'heretile'},
+        {"layer_id": "topology-geometry", "tiling_scheme": "heretile"},
+        {"layer_id": "navigation-attributes", "tiling_scheme": "heretile"},
+        {'layer_id': 'advanced-navigation-attributes', 'tiling_scheme': 'heretile'},
         # {'layer_id': 'truck-attributes', 'tiling_scheme': 'heretile'},
         # {'layer_id': 'places', 'tiling_scheme': 'heretile'},
         # {'layer_id': 'distance-markers', 'tiling_scheme': 'heretile'},
