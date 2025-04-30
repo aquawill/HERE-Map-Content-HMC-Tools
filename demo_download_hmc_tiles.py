@@ -80,6 +80,7 @@ Tips:
 
 """
 
+
 import json
 
 import here.geotiles.heretile as heretile
@@ -131,7 +132,6 @@ class GeoQuery:
             file_format=FileFormat.JSON,
         ).get_country_tile_indexes(self.country_list_tuple)
         for tile_id_list in tile_id_list_per_country:
-            print("tile_id_list", tile_id_list)
             self.here_quad_longkey_list.append(tile_id_list)
 
 
@@ -207,7 +207,7 @@ class LayerDownloader:
                     pass
 
             if downloader.get_schema():
-                print("Schema: {}".format(downloader.get_schema().schema_hrn))
+                print("* Schema: {}".format(downloader.get_schema().schema_hrn))
 
         print("Download complete.")
 
@@ -217,7 +217,7 @@ def main():
     print("HERE Platform Status:", platform.get_status())
 
     # 選項1：下載經緯度所在的partition
-    download_center = GeoCoordinate(lat=41.1185338888889, lng=-8.62504861111111)
+    download_center = GeoCoordinate(lat=51.664415000000005, lng=-3.80175)
 
     # 選項2：下載bounding box所包含的partitions
     download_bounding_box = BoundingBox(
@@ -244,7 +244,6 @@ def main():
 
     hrn_map = {
         HerePlatformCatalog.HMC_RIB_2: ("hrn:here:data::olp-here:rib-2", 12),
-        HerePlatformCatalog.HMC_RIB_LANES_2: ("hrn:here:data::olp-here:rib-lanes-2", 12),
         HerePlatformCatalog.HDLM_WEU_2: (
             "hrn:here:data::olp-here-had:here-hdlm-protobuf-weu-2",
             14,
@@ -286,7 +285,6 @@ def main():
         # {'layer_id': 'adas-attributes', 'tiling_scheme': 'heretile'},
         # {'layer_id': 'road-attributes', 'tiling_scheme': 'heretile'},
         # {"layer_id": "topology-geometry", "tiling_scheme": "heretile"},
-        # {"layer_id": "topology-attributes", "tiling_scheme": "heretile"},
         # {"layer_id": "navigation-attributes", "tiling_scheme": "heretile"},
         # {'layer_id': 'advanced-navigation-attributes', 'tiling_scheme': 'heretile'},
         # {'layer_id': 'truck-attributes', 'tiling_scheme': 'heretile'},
@@ -295,7 +293,7 @@ def main():
         # {'layer_id': 'sign-text', 'tiling_scheme': 'heretile'},
         # {'layer_id': 'postal-code-points', 'tiling_scheme': 'heretile'},
         # {'layer_id': 'postal-area-boundaries', 'tiling_scheme': 'heretile'},
-        # # {'layer_id': 'electric-vehicle-charging-stations', 'tiling_scheme': 'heretile'},
+        # {'layer_id': 'electric-vehicle-charging-stations', 'tiling_scheme': 'heretile'},
         # {'layer_id': 'electric-vehicle-charging-locations', 'tiling_scheme': 'heretile'},
         # {'layer_id': 'enhanced-buildings', 'tiling_scheme': 'heretile'},
         # {'layer_id': 'parking-areas', 'tiling_scheme': 'heretile'},
