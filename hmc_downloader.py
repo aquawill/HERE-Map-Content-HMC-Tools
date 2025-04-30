@@ -7,6 +7,7 @@ schema, download data, and extract country tile and admin indexes.
 import json
 import os
 import subprocess
+import threading
 from typing import Optional, List
 
 from google.protobuf.json_format import MessageToJson
@@ -15,22 +16,14 @@ from here.platform.catalog import Catalog
 from here.platform.partition import Partition
 
 from hmc_download_options import FileFormat
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 def safe_run_cli_command(cmd: str):
-    """
-    執行 shell 指令，並在出錯時清楚印出錯誤資訊。
-
-    :param cmd: 要執行的完整指令字串
-    """
     cmd = ' '.join(cmd.strip().split())
-    print(f"▶️ 執行指令：{cmd}")
     try:
         subprocess.run(cmd, check=True, shell=True)
-        print("✅ 指令執行成功")
     except subprocess.CalledProcessError as e:
-        print(f"❌ 指令執行失敗，返回碼：{e.returncode}")
-        print(f"❌ 錯誤指令內容：{cmd}")
         raise
 
 
@@ -68,7 +61,7 @@ def download_partition(method, catalog, layer_name, partition_id, taget_output_f
         output_path = os.path.join(taget_output_filepath, f"{partition_id}.json")
         with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(json.loads(json_obj), f, indent=2)
-        print(f"下載完成（SDK）：{output_path}")
+        print(f"Download completed（SDK）：{output_path}")
     elif method == 'cli':
         output_folder = os.path.dirname(taget_output_filepath)
         os.makedirs(output_folder, exist_ok=True)
@@ -78,26 +71,18 @@ def download_partition(method, catalog, layer_name, partition_id, taget_output_f
             f'{catalog.hrn} {layer_name} '
             f'--partitions {partition_id} '
             f'--decode true '
-            f'--output "{output_folder}"'
+            f'> "{taget_output_filepath}"'
         )
+        if os.path.exists(taget_output_filepath):
+            os.remove(taget_output_filepath)
+        process = subprocess.Popen(cmd, shell=True)
+        return_code = process.wait()
+        if return_code != 0:
+            raise RuntimeError(f"CLI 指令失敗，返回碼 {return_code}")
 
-        safe_run_cli_command(cmd)
-
-        default_filename = f"{partition_id}-decoded.json"
-        default_output_path = os.path.join(output_folder, default_filename)
-        if default_output_path != taget_output_filepath:
-            if os.path.exists(default_output_path):
-                if os.path.exists(taget_output_filepath):
-                    os.remove(taget_output_filepath)
-                os.rename(default_output_path, taget_output_filepath)
-            else:
-                raise FileNotFoundError(f"CLI 預期產生的檔案不存在：{default_output_path}")
-
-        print(f"下載完成（CLI）：{taget_output_filepath}")
-
-
+        print(f"Download Completed（CLI）：{taget_output_filepath}")
     else:
-        raise ValueError(f"未知的下載方法：{method}")
+        raise ValueError(f"Unknown download method：{method}")
 
 
 class HmcDownloader:
@@ -257,8 +242,41 @@ class HmcDownloader:
             quad_ids: List[int],
             write_to_file: bool = True,
             version: Optional[int] = None,
+            max_workers: int = 5,  # 新增參數：一次同時跑幾個
     ):
         self.set_tiling_scheme(tiling_scheme)
+
+        def download_one(partition_id):
+            try:
+                if version is None:
+                    ver = detect_partition_version(self.catalog, self.layer, partition_id)
+                else:
+                    ver = version
+
+                output_path = self.get_cli_output_filepath(partition_id, ver)
+
+                download_partition(
+                    method="cli",
+                    catalog=self.catalog,
+                    layer_name=self.layer,
+                    partition_id=partition_id,
+                    taget_output_filepath=output_path,
+                    version=ver
+                )
+            except Exception as e:
+                print(f"❌ Partition {partition_id} failed：{e}")
+
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = []
+            for pid in quad_ids:
+                futures.append(executor.submit(download_one, pid))
+
+            for future in as_completed(futures):
+                try:
+                    future.result()
+                except Exception as e:
+                    print(f"❌ Task failure：{e}")
 
         for partition_id in quad_ids:
             if version is None:
