@@ -278,22 +278,22 @@ class HmcDownloader:
                 except Exception as e:
                     print(f"❌ Task failure：{e}")
 
-        for partition_id in quad_ids:
-            if version is None:
-                ver = detect_partition_version(self.catalog, self.layer, partition_id)
-            else:
-                ver = version
-
-            output_file_path = self.get_cli_output_filepath(partition_id, ver)
-
-            download_partition(
-                method="cli",
-                catalog=self.catalog,
-                layer_name=self.layer,
-                partition_id=partition_id,
-                taget_output_filepath=output_file_path,
-                version=ver
-            )
+        # for partition_id in quad_ids:
+        #     if version is None:
+        #         ver = detect_partition_version(self.catalog, self.layer, partition_id)
+        #     else:
+        #         ver = version
+        #
+        #     output_file_path = self.get_cli_output_filepath(partition_id, ver)
+        #
+        #     download_partition(
+        #         method="cli",
+        #         catalog=self.catalog,
+        #         layer_name=self.layer,
+        #         partition_id=partition_id,
+        #         taget_output_filepath=output_file_path,
+        #         version=ver
+        #     )
 
     def download_generic_layer(self, quad_ids: list, version: int):
         self.set_tiling_scheme("generic")
