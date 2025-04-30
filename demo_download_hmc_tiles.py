@@ -202,7 +202,8 @@ class LayerDownloader:
                         write_to_file=True,
                         version=self.version,
                     )
-                except RuntimeError:
+                except RuntimeError as e:
+                    print(e)
                     pass
 
             if downloader.get_schema():
@@ -227,13 +228,13 @@ def main():
     )
 
     # 選項3：下載指定的partition ID
-    download_quad_id_list = [23611407]
+    download_quad_id_list = [23618402, 23618403]
 
     # 選項4：下載指定的的國家（使用ISO 3166-1 alpha-3編碼）
     country_list_tuple = None
 
     # 選項5：決定下載圖層的範圍或目標
-    download_target = download_center
+    download_target = download_quad_id_list
 
     # 選項6：決定下載圖層的最高版本 (int or None)
     download_version = None
