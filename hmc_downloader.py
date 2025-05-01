@@ -34,26 +34,19 @@ def detect_partition_version(catalog, layer_name, partition_id):
         "--filter", str(partition_id),
         "--json"
     ]
-    print(f"Getting partition version: {' '.join(list_cmd)}")
-
-    test_cmd = ["olp", "version", "show"]
-    test_res = subprocess.run(test_cmd, capture_output=True, text=True)
-    if test_res.returncode != 0:
-        raise RuntimeError(f"OLP CLI not found: {test_res.stderr}")
-
-    res = subprocess.run(list_cmd, capture_output=True, text=True)
-    if res.returncode != 0:
-        raise RuntimeError(
-            f"Partition {partition_id} failed (exit {res.returncode}):\nSTDOUT: {res.stdout}\nSTDERR: {res.stderr}")
-
+    print(" ".join(list_cmd))
+    res = subprocess.run(
+        list_cmd,
+        capture_output=True,
+        shell=True,
+        check=True
+    )
     payload = json.loads(res.stdout)
-
     items = payload.get('results', {}).get('items', [])
     if not items:
         raise RuntimeError(f"No partition info found for {partition_id}")
     data_handle = items[0]['dataHandle']
     ver = int(data_handle.split('.')[-1])
-    print(f" --> Latest version: {ver}\n")
     return ver
 
 
@@ -73,21 +66,19 @@ def download_partition(method, catalog, layer_name, partition_id, taget_output_f
         output_folder = os.path.dirname(taget_output_filepath)
         os.makedirs(output_folder, exist_ok=True)
 
-        download_cmd = (
+        cmd = (
             f'olp catalog layer partition get '
             f'{catalog.hrn} {layer_name} '
             f'--partitions {partition_id} '
-            f'--version {version} '
             f'--decode true '
             f'> "{taget_output_filepath}"'
         )
-        print(f"Downloading {layer_name} partition {partition_id}: {download_cmd}")
         if os.path.exists(taget_output_filepath):
             os.remove(taget_output_filepath)
-        process = subprocess.Popen(download_cmd, shell=True)
+        process = subprocess.Popen(cmd, shell=True)
         return_code = process.wait()
         if return_code != 0:
-            raise RuntimeError(f"CLI command failure，code {return_code}")
+            raise RuntimeError(f"CLI 指令失敗，返回碼 {return_code}")
 
         print(f"Download Completed（CLI）：{taget_output_filepath}")
     else:
@@ -178,15 +169,34 @@ class HmcDownloader:
             ),
         )
         if not os.path.exists(filename):  # Check if the file already exists
-            os.makedirs(
-                os.path.join(
-                    "decoded",
-                    hrn_folder_name,
-                    self.tiling_scheme,
-                    str(versioned_partition.id),
-                ),
-                exist_ok=True,
-            )
+            if not os.path.exists(
+                    "decoded"
+            ):  # Create 'decoded' directory if it doesn't exist
+                os.mkdir("decoded")
+            if not os.path.exists(
+                    os.path.join("decoded", hrn_folder_name)
+            ):  # Create HRN directory if it doesn't exist
+                os.mkdir(os.path.join("decoded", hrn_folder_name))
+            if not os.path.exists(
+                    os.path.join("decoded", hrn_folder_name, self.tiling_scheme)
+            ):  # Create HRN directory if it doesn't exist
+                os.mkdir(os.path.join("decoded", hrn_folder_name, self.tiling_scheme))
+            if not os.path.exists(
+                    os.path.join(
+                        "decoded",
+                        hrn_folder_name,
+                        self.tiling_scheme,
+                        str(versioned_partition.id),
+                    )
+            ):  # Create partition directory if it doesn't exist
+                os.mkdir(
+                    os.path.join(
+                        "decoded",
+                        hrn_folder_name,
+                        self.tiling_scheme,
+                        str(versioned_partition.id),
+                    )
+                )
             print(
                 "layer: {} | partition: {} | version: {} | size: {} bytes".format(
                     self.layer,
