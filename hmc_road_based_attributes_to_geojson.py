@@ -21,47 +21,41 @@ import hmc_layer_cross_referencing
 
 def topology_anchor_attribute_mapping(attribute_name, index_name):
     attribute_list = hmc_json[attribute_name]
-    attribute_progressbar = ProgressBar(min_value=0, max_value=len(
-        attribute_list), prefix='{} - processing {}:'.format(f, attribute_name))
+    attribute_progressbar = ProgressBar(min_value=0, max_value=len(attribute_list),
+                                        prefix='{} - processing {}:'.format(f, attribute_name))
     attribute_index = 0
 
     if attribute_name == 'streetSection':
-        street_section_list = hmc_json[attribute_name]
-        for street_section in street_section_list:
+        for street_section in attribute_list:
             street_section_ref = street_section.get('streetSectionRef')
-            street_section_partition_name = street_section_ref.get('partitionName')
-            street_section_ref_set.add(street_section_partition_name)
+            if street_section_ref:
+                street_section_partition_name = street_section_ref.get('partitionName')
+                if street_section_partition_name:
+                    street_section_ref_set.add(street_section_partition_name)
 
     for attribute in attribute_list:
         attribute_progressbar.update(attribute_index)
-        if attribute.get(index_name):
-            if segment_anchor_with_attributes_list:
-                attribute_segment_anchor_indexes = attribute.get(index_name)
-                del attribute[index_name]
-                if isinstance(attribute_segment_anchor_indexes, list):
-                    for attribute_segment_anchor_index in attribute_segment_anchor_indexes:
-                        if attribute != {}:
-                            segment_anchor_with_attributes_list[attribute_segment_anchor_index]['properties'][
-                                attribute_name] = attribute
-                elif isinstance(attribute_segment_anchor_indexes, int):
-                    attribute_segment_anchor_index = attribute_segment_anchor_indexes
-                    # print(attribute_segment_anchor_index, attribute)
-                    if attribute != {}:
-                        segment_anchor_with_attributes_list[attribute_segment_anchor_index]['properties'][
-                            attribute_name] = attribute
+        index_value = attribute.get(index_name)
+        if index_value is not None:
+            del attribute[index_name]
 
-        if attribute.get('nodeAnchorIndex'):
-            if node_anchor_with_attributes_list:
-                attribute_node_anchor_indexes = attribute.get('nodeAnchorIndex')
-                del attribute['nodeAnchorIndex']
-                for attribute_node_anchor_index in attribute_node_anchor_indexes:
-                    if attribute != {}:
-                        if not node_anchor_with_attributes_list[attribute_node_anchor_index].get('properties'):
-                            node_anchor_with_attributes_list[attribute_node_anchor_index]['properties'] = {}
-                        node_anchor_with_attributes_list[attribute_node_anchor_index]['properties'][
-                            attribute_name] = attribute
+            # 確保是 list
+            if isinstance(index_value, int):
+                index_value = [index_value]
 
+            for idx in index_value:
+                if attribute == {}:
+                    continue
+                if index_name == 'nodeAnchorIndex':
+                    if not node_anchor_with_attributes_list[idx].get('properties'):
+                        node_anchor_with_attributes_list[idx]['properties'] = {}
+                    node_anchor_with_attributes_list[idx]['properties'][attribute_name] = attribute
+                else:
+                    if not segment_anchor_with_attributes_list[idx].get('properties'):
+                        segment_anchor_with_attributes_list[idx]['properties'] = {}
+                    segment_anchor_with_attributes_list[idx]['properties'][attribute_name] = attribute
         attribute_index += 1
+
     attribute_progressbar.finish()
 
 
@@ -106,7 +100,14 @@ if __name__ == '__main__':
                         topology_geometry_reference_segment_list = hmc_layer_cross_referencing.segment_list_generator(r)
                         topology_geometry_reference_node_list = hmc_layer_cross_referencing.node_list_generator(r)
 
+                        # create segment identifier index
+                        segment_feature_map = {
+                            segment_feature['properties']['identifier']: segment_feature
+                            for segment_feature in topology_geometry_reference_segment_list['features']
+                        }
+
                         if segment_anchor_with_attributes_list:
+                            segment_anchor_dict = {i: sa for i, sa in enumerate(segment_anchor_with_attributes_list)}
                             segment_output_geojson_file_path = os.path.join(r, '{}_segments.geojson'.format(f))
                             if os.path.exists(segment_output_geojson_file_path) and overwrite_result != 'y':
                                 print('{} --> existing already.'.format(segment_output_geojson_file_path))
@@ -117,7 +118,6 @@ if __name__ == '__main__':
                                     segment_process_progressbar = ProgressBar(min_value=0, max_value=len(
                                         segment_anchor_with_attributes_list), prefix='{} - processing segments:'.format(
                                         f))
-
 
                                     for segment_anchor in segment_anchor_with_attributes_list:
                                         segment_anchor['properties'] = {}
@@ -143,50 +143,58 @@ if __name__ == '__main__':
                                             segment_ref = oriented_segment_ref['segmentRef']
                                             segment_ref_partition_name = segment_ref['partitionName']
                                             segment_ref_identifier = segment_ref['identifier']
-                                            for feature in topology_geometry_reference_segment_list['features']:
-                                                if segment_ref_identifier == feature['properties']['identifier']:
-                                                    segment_anchor_geojson_feature = geojson.Feature()
-                                                    segment_start_offset = 0.0
-                                                    segment_end_offset = 1.0
-                                                    if segment_anchor_with_attributes.get('firstSegmentStartOffset'):
-                                                        segment_start_offset = segment_anchor_with_attributes.get(
-                                                            'firstSegmentStartOffset')
-                                                    if segment_anchor_with_attributes.get('lastSegmentEndOffset'):
-                                                        segment_end_offset = segment_anchor_with_attributes.get(
-                                                            'lastSegmentEndOffset')
-                                                    feature_geometry_length = shapely.geometry.LineString(
-                                                        shapely.from_geojson(str(feature.geometry))).length
-                                                    feature_geometry_offset_length_start = feature_geometry_length * segment_start_offset
-                                                    feature_geometry_offset_length_end = feature_geometry_length * segment_end_offset
-                                                    feature_geometry_with_offsets = shapely. ops.substring(
-                                                        geom=shapely.from_geojson(str(feature.geometry)),
-                                                        start_dist=feature_geometry_offset_length_start,
-                                                        end_dist=feature_geometry_offset_length_end)
-                                                    segment_anchor_geojson_feature.properties = segment_anchor_with_attributes
-                                                    feature_geometry_with_offsets_geojson = geojson.loads(
-                                                        shapely.to_geojson(feature_geometry_with_offsets))
-                                                    if segment_start_offset == segment_end_offset:
-                                                        segment_anchor_geojson_feature.type = 'Feature'
-                                                        segment_anchor_geojson_feature.geometry = geojson.geometry.Point(
-                                                            feature_geometry_with_offsets_geojson)
-                                                    else:
-                                                        segment_anchor_geojson_feature.type = 'Feature'
-                                                        segment_anchor_geojson_feature.geometry = geojson.geometry.LineString(
-                                                            feature_geometry_with_offsets_geojson)
+                                            segment_feature = segment_feature_map.get(segment_ref_identifier)
+                                            if segment_feature:
+                                                segment_anchor_geojson_feature = geojson.Feature()
+                                                segment_start_offset = 0.0
+                                                segment_end_offset = 1.0
+                                                if segment_anchor_with_attributes.get('firstSegmentStartOffset'):
+                                                    segment_start_offset = segment_anchor_with_attributes.get(
+                                                        'firstSegmentStartOffset')
+                                                if segment_anchor_with_attributes.get('lastSegmentEndOffset'):
+                                                    segment_end_offset = segment_anchor_with_attributes.get(
+                                                        'lastSegmentEndOffset')
+                                                feature_geometry_length = shapely.geometry.LineString(
+                                                    shapely.from_geojson(str(segment_feature.geometry))).length
+                                                feature_geometry_offset_length_start = feature_geometry_length * segment_start_offset
+                                                feature_geometry_offset_length_end = feature_geometry_length * segment_end_offset
+                                                feature_geometry_with_offsets = shapely. ops.substring(
+                                                    geom=shapely.from_geojson(str(segment_feature.geometry)),
+                                                    start_dist=feature_geometry_offset_length_start,
+                                                    end_dist=feature_geometry_offset_length_end)
+                                                segment_anchor_geojson_feature.properties = segment_anchor_with_attributes
+                                                feature_geometry_with_offsets_geojson = geojson.loads(
+                                                    shapely.to_geojson(feature_geometry_with_offsets))
+                                                if segment_start_offset == segment_end_offset:
+                                                    segment_anchor_geojson_feature.type = 'Feature'
+                                                    segment_anchor_geojson_feature.geometry = geojson.geometry.Point(
+                                                        feature_geometry_with_offsets_geojson)
+                                                else:
+                                                    segment_anchor_geojson_feature.type = 'Feature'
+                                                    segment_anchor_geojson_feature.geometry = geojson.geometry.LineString(
+                                                        feature_geometry_with_offsets_geojson)
+                                                props = segment_anchor_geojson_feature.properties
+                                                for attr_key, attr_val in list(props.items()):
+                                                    if isinstance(attr_val, dict) and 'nodeAnchorIndex' in attr_val:
+                                                        indices = attr_val['nodeAnchorIndex']
+                                                        if isinstance(indices, int):
+                                                            indices = [indices]
+                                                        resolved = [node_anchor_dict.get(idx) for idx in indices if
+                                                                    idx in node_anchor_dict]
+                                                        props[f"resolvedNodeAnchors"] = resolved
+                                                    # Get LINK PVID with HMC Segment ID
+                                                    # segment_anchor_geojson_feature.properties[
+                                                    #     'hmcExternalReference'] = {}
+                                                    # segment_anchor_geojson_feature.properties[
+                                                    #     'hmcExternalReference'][
+                                                    #     'pvid'] = hmc_external_reference.segment_to_pvid(
+                                                    #     partition_id=partition_name,
+                                                    #     segment_ref=Ref(partition=Partition(str(partition_name)),
+                                                    #                     identifier=Identifier(
+                                                    #                         segment_ref['identifier'])))
 
-                                                        # Get LINK PVID with HMC Segment ID
-                                                        # segment_anchor_geojson_feature.properties[
-                                                        #     'hmcExternalReference'] = {}
-                                                        # segment_anchor_geojson_feature.properties[
-                                                        #     'hmcExternalReference'][
-                                                        #     'pvid'] = hmc_external_reference.segment_to_pvid(
-                                                        #     partition_id=partition_name,
-                                                        #     segment_ref=Ref(partition=Partition(str(partition_name)),
-                                                        #                     identifier=Identifier(
-                                                        #                         segment_ref['identifier'])))
-
-                                                    segment_anchor_with_topology_list.append(
-                                                        segment_anchor_geojson_feature)
+                                                segment_anchor_with_topology_list.append(
+                                                    segment_anchor_geojson_feature)
                                     segment_anchor_with_topology_feature_collection = geojson.FeatureCollection(
                                         segment_anchor_with_topology_list)
                                     segment_process_progressbar.finish()
@@ -194,9 +202,10 @@ if __name__ == '__main__':
                                         json.dumps(segment_anchor_with_topology_feature_collection, indent='    '))
 
                         if node_anchor_with_attributes_list:
+                            node_anchor_dict = {i: na for i, na in enumerate(node_anchor_with_attributes_list)}
                             node_output_geojson_file_path = os.path.join(r,
                                                                          '{}_nodes.geojson'.format(f))
-                            if os.path.exists(node_output_geojson_file_path):
+                            if os.path.exists(node_output_geojson_file_path) and overwrite_result != 'y':
                                 print('{} --> existing already.'.format(node_output_geojson_file_path))
                             else:
                                 with open(node_output_geojson_file_path, mode='w',
@@ -206,6 +215,12 @@ if __name__ == '__main__':
                                                                            max_value=len(
                                                                                node_anchor_with_attributes_list),
                                                                            prefix='{} - processing nodes:'.format(f))
+                                    # create node feature index
+                                    node_feature_map = {
+                                        node_feature['properties']['identifier']: node_feature
+                                        for node_feature in topology_geometry_reference_node_list['features']
+                                    }
+
                                     for node_anchor in node_anchor_with_attributes_list:
                                         node_anchor['properties'] = {}
                                     for key in list(hmc_json.keys()):
@@ -220,14 +235,23 @@ if __name__ == '__main__':
                                         node_ref = node_anchor_with_attributes['nodeRef']
                                         node_ref_partition_name = node_ref['partitionName']
                                         node_ref_identifier = node_ref['identifier']
-                                        for feature in topology_geometry_reference_node_list['features']:
-                                            if node_ref_identifier == feature['properties']['identifier']:
-                                                node_anchor_geojson_feature = geojson.Feature()
-                                                node_anchor_geojson_feature.geometry = geojson.geometry.Point(
-                                                    feature.geometry)
-                                                node_anchor_geojson_feature.properties = node_anchor_with_attributes[
-                                                    'properties']
-                                                node_anchor_with_topology_list.append(node_anchor_geojson_feature)
+                                        node_feature = node_feature_map.get(node_ref_identifier)
+                                        if node_feature:
+                                            node_anchor_geojson_feature = geojson.Feature()
+                                            node_anchor_geojson_feature.geometry = geojson.geometry.Point(
+                                                node_feature.geometry)
+                                            node_anchor_geojson_feature.properties = node_anchor_with_attributes[
+                                                'properties']
+                                            props = node_anchor_geojson_feature.properties
+                                            for attr_key, attr_val in list(props.items()):
+                                                if isinstance(attr_val, dict) and 'segmentAnchorIndex' in attr_val:
+                                                    indices = attr_val['segmentAnchorIndex']
+                                                    if isinstance(indices, int):
+                                                        indices = [indices]
+                                                    resolved = [segment_anchor_dict.get(idx) for idx in indices if
+                                                                idx in segment_anchor_dict]
+                                                    props[f"resolvedSegmentAnchors"] = resolved
+                                            node_anchor_with_topology_list.append(node_anchor_geojson_feature)
                                     node_process_progressbar.finish()
 
                                     node_anchor_with_topology_feature_collection = geojson.FeatureCollection(
@@ -237,6 +261,10 @@ if __name__ == '__main__':
                                         json.dumps(node_anchor_with_topology_feature_collection, indent='    '))
                         if len(street_section_ref_set) > 0 and road_attribute_layer == 'address-attributes':
                             print('street-name reference partitions: ', list(street_section_ref_set))
+                            # for street_name_partition in list(street_section_ref_set):
+                            #     if os.
+                            #
+                            # 'decoded/hrn_here_data__olp-here_rib-2/generic/20252820-20291912/street-names_20252820-20291912_v7066.json'
                             street_name_reference_layers = ['street-names']
                             print('download street-name reference layers: {}'.format(', '.join(street_name_reference_layers)))
                             platform = Platform()
