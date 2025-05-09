@@ -131,6 +131,7 @@ class GeoQuery:
             file_format=FileFormat.JSON,
         ).get_country_tile_indexes(self.country_list_tuple)
         for tile_id_list in tile_id_list_per_country:
+            print("tile_id_list", tile_id_list)
             self.here_quad_longkey_list.append(tile_id_list)
 
 
@@ -206,7 +207,7 @@ class LayerDownloader:
                     pass
 
             if downloader.get_schema():
-                print("* Schema: {}".format(downloader.get_schema().schema_hrn))
+                print("Schema: {}".format(downloader.get_schema().schema_hrn))
 
         print("Download complete.")
 

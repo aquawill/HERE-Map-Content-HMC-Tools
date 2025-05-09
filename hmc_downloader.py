@@ -47,6 +47,7 @@ def detect_partition_version(catalog, layer_name, partition_id):
         raise RuntimeError(f"No partition info found for {partition_id}")
     data_handle = items[0]['dataHandle']
     ver = int(data_handle.split('.')[-1])
+    print(f" --> Latest version: {ver}\n")
     return ver
 
 
@@ -70,16 +71,17 @@ def download_partition(method, catalog, layer_name, partition_id, taget_output_f
             f'olp catalog layer partition get '
             f'{catalog.hrn} {layer_name} '
             f'--partitions {partition_id} '
+            f'--version {version} '
             f'--decode true '
             f'> "{taget_output_filepath}"'
         )
-        print(f"Downloading {layer_name} partition {partition_id}: {' '.join(download_cmd)}")
+        print(f"Downloading {layer_name} partition {partition_id}: {download_cmd}")
         if os.path.exists(taget_output_filepath):
             os.remove(taget_output_filepath)
         process = subprocess.Popen(download_cmd, shell=True)
         return_code = process.wait()
         if return_code != 0:
-            raise RuntimeError(f"CLI 指令失敗，返回碼 {return_code}")
+            raise RuntimeError(f"CLI command failure，code {return_code}")
 
         print(f"Download Completed（CLI）：{taget_output_filepath}")
     else:
