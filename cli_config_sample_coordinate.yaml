@@ -1,0 +1,13 @@
+catalog: HMC_RIB_2
+version: null
+download_method: OLP_CLI
+
+target:
+  type: coordinate
+  coordinate: { lat: 25.12846051502084, lng: 121.74177310817339 }
+
+layers:
+  - topology-geometry
+  - navigation-attributes
+  - advanced-navigation-attributes
+  - places

@@ -1,0 +1,17 @@
+catalog: HMC_RIB_2
+version: null
+download_method: OLP_CLI
+
+target:
+  type: bounding_box
+  bounding_box:
+    west: 121.07787428520889
+    south: 22.61936277060766
+    east: 121.52031505336426
+    north: 22.90417793935273
+
+layers:
+  - topology-geometry
+  - navigation-attributes
+  - advanced-navigation-attributes
+  - places

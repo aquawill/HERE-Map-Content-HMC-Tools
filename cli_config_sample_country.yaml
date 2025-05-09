@@ -1,0 +1,13 @@
+catalog: HMC_RIB_2
+version: null
+download_method: OLP_CLI
+
+target:
+  type: country
+  countries: ["VAT"]
+
+layers:
+  - topology-geometry
+  - navigation-attributes
+  - advanced-navigation-attributes
+  - places
