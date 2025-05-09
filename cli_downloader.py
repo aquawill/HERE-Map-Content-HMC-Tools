@@ -2,7 +2,6 @@ import argparse
 import yaml
 import json
 from here.platform import Platform
-from here.geotiles.heretile import in_bounding_box, from_coordinates
 
 from hmc_downloader import HmcDownloader
 from hmc_download_options import FileFormat, HerePlatformCatalog, DownloadMethod
@@ -12,7 +11,6 @@ CATALOG_HRN_LEVEL_MAP = {
     "HMC_RIB_2": ("hrn:here:data::olp-here:rib-2", 12),
     "HDLM_WEU_2": ("hrn:here:data::olp-here-had:here-hdlm-protobuf-weu-2", 14),
     "HMC_EXT_REF_2": ("hrn:here:data::olp-here:rib-external-references-2", 12),
-    "HMC_RIB_LANES_2": ("hrn:here:data::olp-here:rib-lanes-2", 12),
 }
 
 
@@ -73,14 +71,6 @@ class YamlBasedDownloader:
             print("No partition IDs resolved.")
             return
 
-        if not self.layers:
-            self.layers = []
-            catalog_details = json.loads(json.dumps(self.catalog.get_details()))
-            catalog_layers = catalog_details["layers"]
-            for catalog_layer in catalog_layers:
-                if catalog_layer["partitioningScheme"] == "heretile":
-                    self.layers.append(catalog_layer["id"])
-
         for layer_id in self.layers:
             print(f"Downloading {layer_id}...")
             downloader = HmcDownloader(
@@ -108,7 +98,6 @@ if __name__ == '__main__':
         sample = {
             'catalog': 'HMC_RIB_2',
             'version': None,
-            'download_method': 'DATA_SDK',
             'target': {
                 'type': 'bounding_box',
                 'bounding_box': {

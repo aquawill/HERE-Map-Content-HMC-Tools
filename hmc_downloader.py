@@ -34,7 +34,7 @@ def detect_partition_version(catalog, layer_name, partition_id):
         "--filter", str(partition_id),
         "--json"
     ]
-    print(" ".join(list_cmd))
+    print(f"Getting {layer_name} partition {partition_id} version: {' '.join(list_cmd)}")
     res = subprocess.run(
         list_cmd,
         capture_output=True,
@@ -66,16 +66,17 @@ def download_partition(method, catalog, layer_name, partition_id, taget_output_f
         output_folder = os.path.dirname(taget_output_filepath)
         os.makedirs(output_folder, exist_ok=True)
 
-        cmd = (
+        download_cmd = (
             f'olp catalog layer partition get '
             f'{catalog.hrn} {layer_name} '
             f'--partitions {partition_id} '
             f'--decode true '
             f'> "{taget_output_filepath}"'
         )
+        print(f"Downloading {layer_name} partition {partition_id}: {' '.join(download_cmd)}")
         if os.path.exists(taget_output_filepath):
             os.remove(taget_output_filepath)
-        process = subprocess.Popen(cmd, shell=True)
+        process = subprocess.Popen(download_cmd, shell=True)
         return_code = process.wait()
         if return_code != 0:
             raise RuntimeError(f"CLI 指令失敗，返回碼 {return_code}")
