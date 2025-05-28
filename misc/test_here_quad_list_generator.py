@@ -23,7 +23,7 @@ with open(args.output_file, 'w') as output:
         wkt = heretile.BoundingBox(west, south, east, north).wkt
         output.write('{}\t{}\n'.format(tile.real, wkt))
 
-# Example: python here_quad_list_generator.py -1 -1 1 1 12 testlist.txt
-# Example: python here_quad_list_generator.py -180 -90 180 90 12 fulllist.txt
+# Example: python test_here_quad_list_generator.py -1 -1 1 1 12 testlist.txt
+# Example: python test_here_quad_list_generator.py -180 -90 180 90 12 fulllist.txt
 
 

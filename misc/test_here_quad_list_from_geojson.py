@@ -56,4 +56,4 @@ with open('{}_TILE_LIST.txt'.format(input_geojson_file), 'w') as tile_list_outpu
                 tile_list_output_file.write('{}\t{}\n'.format(tile.real, tile_polygon.wkt))
         geometry_index += 1
 
-# Example: python here_quad_list_from_geojson.py thailand.geojson 12
+# Example: python test_here_quad_list_from_geojson.py thailand.geojson 12
