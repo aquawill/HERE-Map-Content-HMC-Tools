@@ -1,12 +1,8 @@
 from google.protobuf.json_format import MessageToJson
 from here.platform import Platform
 from here.platform.adapter import DecodedMessage
-from here.platform.adapter import Decoder
 from here.platform.catalog import Catalog
 
-catalog_hrn = 'hrn:here:data::olp-here:ocm'
-layer_hrn = 'isa'
-partition_list = ['386497709']
 # version = 6955
 
 platform = Platform()
