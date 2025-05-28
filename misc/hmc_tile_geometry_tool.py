@@ -17,7 +17,7 @@ def convert(latitude, longitude, tile_id, here_platform_catalog, result_mode):
         quad = HereQuad.from_long_key(tile_id)
     else:
         print('please input lat/lng or tile id, such as:\n'
-              'python hmc_tile_geometry_tool.py --lng 52.52507 --lat 13.36937 --catalog rib2 --mode polygon\n'
+              'python hmc_tile_geometry_tool.py --longitude 52.52507 --latitude 13.36937 --catalog rib2 --mode polygon\n'
               'python hmc_tile_geometry_tool.py --id 24319681 --catalog rib2 --mode polyline\n')
         quit()
 
