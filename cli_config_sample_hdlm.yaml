@@ -1,0 +1,23 @@
+catalog: HDLM_WEU_2
+version: null
+download_method: OLP_CLI
+
+target:
+  type: coordinate
+  coordinate: { lat: 52.474259273836864, lng: 13.351309500351945 }
+
+layers:
+  - adas-attributes
+  - external-reference-attributes
+  - localization-sign
+  - localization-pole
+  - lane-topology
+  - lane-geometry-polyline
+  - localization-barrier
+  - lane-road-references
+  - localization-overhead-structure-face
+  - lane-attributes
+  - routing-lane-attributes
+  - routing-attributes
+  - speed-attributes
+  - topology-geometry
