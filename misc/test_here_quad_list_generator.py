@@ -16,6 +16,7 @@ args = parser.parse_args()
 tile_list = heretile.in_bounding_box(west=args.west, south=args.south, east=args.east, north=args.north,
                                      level=args.level)
 
+
 with open(args.output_file, 'w') as output:
     output.write('quadkey\twkt\n')
     for tile in tile_list:

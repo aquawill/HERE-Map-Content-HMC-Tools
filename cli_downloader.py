@@ -1,11 +1,10 @@
 import argparse
 import yaml
-import json
 from here.platform import Platform
-from here.geotiles.heretile import GeoCoordinate, BoundingBox, in_bounding_box, from_coordinates
+from here.geotiles.heretile import in_bounding_box, from_coordinates
 
-from hmc_downloader import HmcDownloader
-from hmc_download_options import FileFormat, HerePlatformCatalog, DownloadMethod
+from hmc_converter.hmc_downloader import HmcDownloader
+from hmc_converter.hmc_download_options import FileFormat, HerePlatformCatalog, DownloadMethod
 
 
 CATALOG_HRN_LEVEL_MAP = {
