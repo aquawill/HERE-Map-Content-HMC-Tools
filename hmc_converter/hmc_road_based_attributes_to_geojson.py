@@ -5,13 +5,7 @@ import re
 import geojson
 import shapely
 from shapely.ops import substring
-from here.content.utils.hmc_external_references import HMCExternalReferences
-from here.content.utils.hmc_external_references import Ref
-from here.platform.adapter import Identifier
-from here.platform.adapter import Partition
 from here.platform import Platform
-from here.content.content import Content
-from here.content.hmc2.hmc import HMC
 from progressbar import ProgressBar
 from hmc_downloader import HmcDownloader
 from hmc_download_options import FileFormat
