@@ -87,8 +87,8 @@ import here.geotiles.heretile as heretile
 from here.geotiles.heretile import BoundingBox, GeoCoordinate
 from here.platform import Platform
 
-from hmc_download_options import FileFormat, HerePlatformCatalog, DownloadMethod
-from hmc_downloader import HmcDownloader
+from hmc_converter.hmc_download_options import FileFormat, HerePlatformCatalog, DownloadMethod
+from hmc_converter.hmc_downloader import HmcDownloader
 
 
 class GeoQuery:
