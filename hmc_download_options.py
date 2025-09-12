@@ -18,6 +18,7 @@ class HerePlatformCatalog(Enum):
     HMC_EXT_REF_2 = 3
     CLASSIC_HERE_LANES_WEU = 4
     ONEMAP_HERE_LANES_WEU = 5
+    HMC_RIB_LANES_2 = 6
 
 class DownloadMethod(Enum):
     DATA_SDK = 1
