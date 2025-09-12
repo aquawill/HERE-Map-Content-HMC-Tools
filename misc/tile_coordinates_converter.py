@@ -3,10 +3,8 @@ import json
 
 import here.geotiles.heretile as heretile
 
-WORLD_COORDINATE_BITS = 25
 
-
-def tile_xy_to_wgs84(x, y, tile_row, tile_column, tile_level, world_coordinate_bits=WORLD_COORDINATE_BITS):
+def tile_xy_to_wgs84(x, y, tile_row, tile_column, tile_level, world_coordinate_bits):
     i_lat_tile = tile_row << (world_coordinate_bits - tile_level)
     i_lng_tile = tile_column << (world_coordinate_bits - tile_level)
 
@@ -19,7 +17,7 @@ def tile_xy_to_wgs84(x, y, tile_row, tile_column, tile_level, world_coordinate_b
     return lat, lng
 
 
-def wgs84_to_tile_xy(lat, lng, tile_level, world_coordinate_bits=WORLD_COORDINATE_BITS):
+def wgs84_to_tile_xy(lat, lng, tile_level, world_coordinate_bits):
     i_lat = int(((lat + 90.0) / 360.0) * (1 << world_coordinate_bits))
     i_lng = int(((lng + 180.0) / 360.0) * (1 << world_coordinate_bits))
 
@@ -34,9 +32,9 @@ def wgs84_to_tile_xy(lat, lng, tile_level, world_coordinate_bits=WORLD_COORDINAT
     return tile, tile_row, tile_column, x, y
 
 
-def quadkey_xy_to_wgs84(quadkey, x, y):
+def quadkey_xy_to_wgs84(quadkey, x, y, world_coordinate_bits):
     tile_column, tile_row, tile_level = heretile.get_x_y_level(quadkey)
-    lat, lng = tile_xy_to_wgs84(x, y, tile_row, tile_column, tile_level)
+    lat, lng = tile_xy_to_wgs84(x, y, tile_row, tile_column, tile_level, world_coordinate_bits)
     return {
         "lat": lat,
         "lng": lng,
@@ -55,6 +53,8 @@ def main():
     p1.add_argument("--lat", type=float, required=True)
     p1.add_argument("--lng", type=float, required=True)
     p1.add_argument("--level", type=int, required=True)
+    p1.add_argument("--world_coordinate_bits", type=int, required=True)
+
 
     # Mode 2: tile XY → WGS84
     p2 = subparsers.add_parser("from-tile-coords-to-wgs84", help="Convert tile XY to WGS84")
@@ -63,12 +63,14 @@ def main():
     p2.add_argument("--x", type=int, required=True)
     p2.add_argument("--y", type=int, required=True)
     p2.add_argument("--level", type=int, required=True)
+    p2.add_argument("--world_coordinate_bits", type=int, required=True)
 
     # Mode 3: quadkey + inner XY → WGS84
     p3 = subparsers.add_parser("from-quadkey-coords-to-wgs84", help="Convert quadkey + tile xy to WGS84")
     p3.add_argument("--quadkey", type=int, required=True)
     p3.add_argument("--x", type=int, required=True)
     p3.add_argument("--y", type=int, required=True)
+    p3.add_argument("--world_coordinate_bits", type=int, required=True)
 
     # Mode 4: quadkey → tile row/column/level
     p4 = subparsers.add_parser("from-quadkey-to-tile", help="Convert quadkey to tile row/column/level")
@@ -79,11 +81,12 @@ def main():
     p5.add_argument("--tile_column", type=int, required=True)
     p5.add_argument("--tile_row", type=int, required=True)
     p5.add_argument("--level", type=int, required=True)
+    p5.add_argument("--world_coordinate_bits", type=int, required=True)
 
     args = parser.parse_args()
 
     if args.command == "from-wgs84-to-tile-coords":
-        tile, row, col, x, y = wgs84_to_tile_xy(args.lat, args.lng, args.level)
+        tile, row, col, x, y = wgs84_to_tile_xy(args.lat, args.lng, args.level, args.world_coordinate_bits)
         result = {
             "quadkey": tile,
             "tile_row": row,
@@ -93,14 +96,14 @@ def main():
         }
 
     elif args.command == "from-tile-coords-to-wgs84":
-        lat, lng = tile_xy_to_wgs84(args.x, args.y, args.tile_row, args.tile_column, args.level)
+        lat, lng = tile_xy_to_wgs84(args.x, args.y, args.tile_row, args.tile_column, args.level, args.world_coordinate_bits)
         result = {
             "lat": lat,
             "lng": lng
         }
 
     elif args.command == "from-quadkey-coords-to-wgs84":
-        result = quadkey_xy_to_wgs84(args.quadkey, args.x, args.y)
+        result = quadkey_xy_to_wgs84(args.quadkey, args.x, args.y, args.world_coordinate_bits)
 
     elif args.command == "from-quadkey-to-tile":
         tile_column, tile_row, tile_level = heretile.get_x_y_level(args.quadkey)
