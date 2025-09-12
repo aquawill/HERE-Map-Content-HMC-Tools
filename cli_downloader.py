@@ -11,6 +11,7 @@ CATALOG_HRN_LEVEL_MAP = {
     "HMC_RIB_2": ("hrn:here:data::olp-here:rib-2", 12),
     "HDLM_WEU_2": ("hrn:here:data::olp-here-had:here-hdlm-protobuf-weu-2", 14),
     "HMC_EXT_REF_2": ("hrn:here:data::olp-here:rib-external-references-2", 12),
+    "HMC_RIB_LANES_2": ("hrn:here:data::olp-here:rib-lanes-2", 12),
 }
 
 
