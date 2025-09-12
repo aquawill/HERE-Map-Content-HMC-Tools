@@ -86,8 +86,8 @@ import here.geotiles.heretile as heretile
 from here.geotiles.heretile import BoundingBox, GeoCoordinate
 from here.platform import Platform
 
-from hmc_converter.hmc_download_options import FileFormat, HerePlatformCatalog, DownloadMethod
-from hmc_converter.hmc_downloader import HmcDownloader
+from hmc_download_options import FileFormat, HerePlatformCatalog, DownloadMethod
+from hmc_downloader import HmcDownloader
 
 
 class GeoQuery:
@@ -275,34 +275,35 @@ def main():
     available_layers = []
 
     hmc_rib_2_layers = [
-        # {'layer_id': 'address-locations', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'building-footprints', 'tiling_scheme': 'heretile'},
-        # {'layer_id': '3d-buildings', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'cartography', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'traffic-patterns', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'lane-attributes', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'address-attributes', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'address-locations', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'building-footprints', 'tiling_scheme': 'heretile'},
+        {'layer_id': '3d-buildings', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'cartography', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'traffic-patterns', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'lane-attributes', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'address-attributes', 'tiling_scheme': 'heretile'},
         {'layer_id': 'adas-attributes', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'road-attributes', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'road-attributes', 'tiling_scheme': 'heretile'},
         {"layer_id": "topology-geometry", "tiling_scheme": "heretile"},
+        {"layer_id": "topology-attributes", "tiling_scheme": "heretile"},
         {"layer_id": "navigation-attributes", "tiling_scheme": "heretile"},
         {'layer_id': 'advanced-navigation-attributes', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'truck-attributes', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'places', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'distance-markers', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'sign-text', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'postal-code-points', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'postal-area-boundaries', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'truck-attributes', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'places', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'distance-markers', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'sign-text', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'postal-code-points', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'postal-area-boundaries', 'tiling_scheme': 'heretile'},
         # {'layer_id': 'electric-vehicle-charging-stations', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'electric-vehicle-charging-locations', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'enhanced-buildings', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'parking-areas', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'annotations', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'bicycle-attributes', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'warning-locations', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'complex-road-attributes', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'recreational-vehicle-attributes', 'tiling_scheme': 'heretile'},
-        # {'layer_id': 'buildings', 'tiling_scheme': 'heretile'}
+        {'layer_id': 'electric-vehicle-charging-locations', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'enhanced-buildings', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'parking-areas', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'annotations', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'bicycle-attributes', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'warning-locations', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'complex-road-attributes', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'recreational-vehicle-attributes', 'tiling_scheme': 'heretile'},
+        {'layer_id': 'buildings', 'tiling_scheme': 'heretile'}
     ]
 
     hdlm_weu_layers = [

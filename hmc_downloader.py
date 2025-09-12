@@ -159,7 +159,7 @@ class HmcDownloader:
         elif self.file_format == FileFormat.JSON:
             extension = "json"
         filename = os.path.join(
-            "../decoded",
+            "decoded",
             hrn_folder_name,
             self.tiling_scheme,
             str(versioned_partition.id),
@@ -173,20 +173,20 @@ class HmcDownloader:
         )
         if not os.path.exists(filename):  # Check if the file already exists
             if not os.path.exists(
-                    "../decoded"
+                    "decoded"
             ):  # Create 'decoded' directory if it doesn't exist
-                os.mkdir("../decoded")
+                os.mkdir("decoded")
             if not os.path.exists(
-                    os.path.join("../decoded", hrn_folder_name)
+                    os.path.join("decoded", hrn_folder_name)
             ):  # Create HRN directory if it doesn't exist
-                os.mkdir(os.path.join("../decoded", hrn_folder_name))
+                os.mkdir(os.path.join("decoded", hrn_folder_name))
             if not os.path.exists(
-                    os.path.join("../decoded", hrn_folder_name, self.tiling_scheme)
+                    os.path.join("decoded", hrn_folder_name, self.tiling_scheme)
             ):  # Create HRN directory if it doesn't exist
-                os.mkdir(os.path.join("../decoded", hrn_folder_name, self.tiling_scheme))
+                os.mkdir(os.path.join("decoded", hrn_folder_name, self.tiling_scheme))
             if not os.path.exists(
                     os.path.join(
-                        "../decoded",
+                        "decoded",
                         hrn_folder_name,
                         self.tiling_scheme,
                         str(versioned_partition.id),
@@ -194,7 +194,7 @@ class HmcDownloader:
             ):  # Create partition directory if it doesn't exist
                 os.mkdir(
                     os.path.join(
-                        "../decoded",
+                        "decoded",
                         hrn_folder_name,
                         self.tiling_scheme,
                         str(versioned_partition.id),
@@ -316,7 +316,7 @@ class HmcDownloader:
         """
         hrn_folder = self.catalog.hrn.replace(':', '_')
         base_dir = os.path.join(
-            '../decoded',
+            'decoded',
             hrn_folder,
             self.tiling_scheme,
             str(partition_id)
