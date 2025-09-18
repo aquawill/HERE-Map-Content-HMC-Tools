@@ -1,0 +1,11 @@
+catalog: HMC_RIB_LANES_2
+version: null
+download_method: OLP_CLI
+
+target:
+  type: coordinate
+  coordinate: { lat: 52.24657209517959, lng: 10.50807094760168 }
+
+layers:
+#  - physical-lane-groups
+#  - physical-lane-attributes

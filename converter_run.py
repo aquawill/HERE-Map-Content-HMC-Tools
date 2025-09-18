@@ -1,6 +1,6 @@
 import os
 
-rib2_partition_path = r'../decoded/hrn_here_data__olp-here_rib-2/heretile'
+rib2_partition_path = r'decoded/hrn_here_data__olp-here_rib-2/heretile'
 ext_ref2_partition_path = r'../decoded/hrn_here_data__olp-here_rib-external-references-2/'
 overwrite = 'y'
 

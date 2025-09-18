@@ -7,7 +7,7 @@ target:
   coordinate: { lat: 25.12846051502084, lng: 121.74177310817339 }
 
 layers:
-  - topology-geometry
-  - navigation-attributes
-  - advanced-navigation-attributes
-  - places
+#  - topology-geometry
+#  - navigation-attributes
+#  - advanced-navigation-attributes
+#  - places

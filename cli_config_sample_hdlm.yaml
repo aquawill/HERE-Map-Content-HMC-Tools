@@ -4,20 +4,20 @@ download_method: OLP_CLI
 
 target:
   type: coordinate
-  coordinate: { lat: 52.474259273836864, lng: 13.351309500351945 }
+  coordinate: { lat: 52.24657209517959, lng: 10.50807094760168 }
 
 layers:
-  - adas-attributes
-  - external-reference-attributes
-  - localization-sign
-  - localization-pole
-  - lane-topology
-  - lane-geometry-polyline
-  - localization-barrier
-  - lane-road-references
-  - localization-overhead-structure-face
-  - lane-attributes
-  - routing-lane-attributes
-  - routing-attributes
-  - speed-attributes
-  - topology-geometry
+#  - adas-attributes
+#  - external-reference-attributes
+#  - localization-sign
+#  - localization-pole
+#  - lane-topology
+#  - lane-geometry-polyline
+#  - localization-barrier
+#  - lane-road-references
+#  - localization-overhead-structure-face
+#  - lane-attributes
+#  - routing-lane-attributes
+#  - routing-attributes
+#  - speed-attributes
+#  - topology-geometry

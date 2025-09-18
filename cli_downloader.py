@@ -1,5 +1,6 @@
 import argparse
 import yaml
+import json
 from here.platform import Platform
 from here.geotiles.heretile import in_bounding_box, from_coordinates
 
@@ -72,6 +73,14 @@ class YamlBasedDownloader:
             print("No partition IDs resolved.")
             return
 
+        if not self.layers:
+            self.layers = []
+            catalog_details = json.loads(json.dumps(self.catalog.get_details()))
+            catalog_layers = catalog_details["layers"]
+            for catalog_layer in catalog_layers:
+                if catalog_layer["partitioningScheme"] == "heretile":
+                    self.layers.append(catalog_layer["id"])
+
         for layer_id in self.layers:
             print(f"Downloading {layer_id}...")
             downloader = HmcDownloader(
@@ -99,7 +108,7 @@ if __name__ == '__main__':
         sample = {
             'catalog': 'HMC_RIB_2',
             'version': None,
-            'download_method': 'OLP_CLI',
+            'download_method': 'DATA_SDK',
             'target': {
                 'type': 'bounding_box',
                 'bounding_box': {
