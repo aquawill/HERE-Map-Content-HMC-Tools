@@ -50,7 +50,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     lat = args.latitude
-    lng = args.latitude
+    lng = args.longitude
     tileid = args.tileid
     catalog = args.catalog
     mode = args.mode

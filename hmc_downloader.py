@@ -172,34 +172,15 @@ class HmcDownloader:
             ),
         )
         if not os.path.exists(filename):  # Check if the file already exists
-            if not os.path.exists(
-                    "decoded"
-            ):  # Create 'decoded' directory if it doesn't exist
-                os.mkdir("decoded")
-            if not os.path.exists(
-                    os.path.join("decoded", hrn_folder_name)
-            ):  # Create HRN directory if it doesn't exist
-                os.mkdir(os.path.join("decoded", hrn_folder_name))
-            if not os.path.exists(
-                    os.path.join("decoded", hrn_folder_name, self.tiling_scheme)
-            ):  # Create HRN directory if it doesn't exist
-                os.mkdir(os.path.join("decoded", hrn_folder_name, self.tiling_scheme))
-            if not os.path.exists(
-                    os.path.join(
-                        "decoded",
-                        hrn_folder_name,
-                        self.tiling_scheme,
-                        str(versioned_partition.id),
-                    )
-            ):  # Create partition directory if it doesn't exist
-                os.mkdir(
-                    os.path.join(
-                        "decoded",
-                        hrn_folder_name,
-                        self.tiling_scheme,
-                        str(versioned_partition.id),
-                    )
-                )
+            os.makedirs(
+                os.path.join(
+                    "decoded",
+                    hrn_folder_name,
+                    self.tiling_scheme,
+                    str(versioned_partition.id),
+                ),
+                exist_ok=True,
+            )
             print(
                 "layer: {} | partition: {} | version: {} | size: {} bytes".format(
                     self.layer,
