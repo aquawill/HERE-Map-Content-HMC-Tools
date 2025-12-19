@@ -5,8 +5,9 @@
       <excludeFolder url="file://$MODULE_DIR$/decoded" />
       <excludeFolder url="file://$MODULE_DIR$/google" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/.venv" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 3.14 (HERE-Map-Content-HMC-Tools)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

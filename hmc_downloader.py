@@ -34,14 +34,20 @@ def detect_partition_version(catalog, layer_name, partition_id):
         "--filter", str(partition_id),
         "--json"
     ]
-    print(f"Getting {layer_name} partition {partition_id} version: {' '.join(list_cmd)}")
-    res = subprocess.run(
-        list_cmd,
-        capture_output=True,
-        shell=True,
-        check=True
-    )
+    print(f"Getting partition version: {' '.join(list_cmd)}")
+
+    test_cmd = ["olp", "version", "show"]
+    test_res = subprocess.run(test_cmd, capture_output=True, text=True)
+    if test_res.returncode != 0:
+        raise RuntimeError(f"OLP CLI not found: {test_res.stderr}")
+
+    res = subprocess.run(list_cmd, capture_output=True, text=True)
+    if res.returncode != 0:
+        raise RuntimeError(
+            f"Partition {partition_id} failed (exit {res.returncode}):\nSTDOUT: {res.stdout}\nSTDERR: {res.stderr}")
+
     payload = json.loads(res.stdout)
+
     items = payload.get('results', {}).get('items', [])
     if not items:
         raise RuntimeError(f"No partition info found for {partition_id}")
