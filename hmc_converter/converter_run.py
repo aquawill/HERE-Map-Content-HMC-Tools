@@ -1,10 +1,14 @@
 import os
 
 <<<<<<<< HEAD:converter_run.py
+<<<<<<<< HEAD:converter_run.py
 rib2_partition_path = r'decoded/hrn_here_data__olp-here_rib-2/heretile'
 ========
 rib2_partition_path = r'../decoded/hrn_here_data__olp-here_rib-2/heretile'
 >>>>>>>> d563863 (1. Restructure converters.):hmc_converter/converter_run.py
+========
+rib2_partition_path = r'../decoded/hrn_here_data__olp-here_rib-2/heretile'
+>>>>>>>> refs/remotes/origin/refactor-20250429:hmc_converter/converter_run.py
 ext_ref2_partition_path = r'../decoded/hrn_here_data__olp-here_rib-external-references-2/'
 overwrite = 'y'
 

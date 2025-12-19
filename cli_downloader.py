@@ -1,7 +1,7 @@
 import argparse
 import yaml
-import json
 from here.platform import Platform
+from here.geotiles.heretile import in_bounding_box, from_coordinates
 
 from hmc_downloader import HmcDownloader
 from hmc_download_options import FileFormat, HerePlatformCatalog, DownloadMethod
@@ -99,6 +99,7 @@ if __name__ == '__main__':
         sample = {
             'catalog': 'HMC_RIB_2',
             'version': None,
+            'download_method': 'OLP_CLI',
             'target': {
                 'type': 'bounding_box',
                 'bounding_box': {
