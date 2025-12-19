@@ -1,4 +1,4 @@
-name: HERE-Map-Content-HMC-Tools
+name: hmc-tools
 channels:
   - conda-forge
   - defaults
