@@ -1,7 +1,6 @@
 name: hmc-tools
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - bzip2=1.0.8
   - ca-certificates=2025.11.12
