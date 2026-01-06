@@ -38,7 +38,7 @@ def detect_partition_version(catalog, layer_name, partition_id):
     res = subprocess.run(
         list_cmd,
         capture_output=True,
-        shell=True,
+        # shell=True,
         check=True
     )
     payload = json.loads(res.stdout)
